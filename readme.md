@@ -10,7 +10,7 @@ Antes de iniciar, você precisará ter o Docker e o Docker Compose instalados na
 
 Para iniciar a aplicação, execute o seguinte comando na pasta onde está localizado o arquivo docker-compose.yml: docker-compose up -d
 
-Isso irá baixar as imagens necessárias, criar os containers e iniciar a aplicação na porta 80. Certifique-se de que as portas 80, 5432 e 9200 não estão sendo usadas por outras aplicações na sua máquina.
+Isso irá baixar as imagens necessárias, criar os containers e iniciar a aplicação na porta 2127. Certifique-se de que as portas 2127, 5432 e 9200 não estão sendo usadas por outras aplicações na sua máquina.
 
 ## Realizando backups
 
