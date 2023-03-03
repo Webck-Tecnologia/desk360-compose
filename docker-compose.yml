@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  zammad:
+    image: desk360:1.0.0
+    restart: always
+    environment:
+      - DB_ADAPTER=postgresql
+      - DB_HOST=zammad-postgresql
+      - DB_PORT=5432
+      - DB_NAME=zammad_production
+      - DB_USER=zammad
+      - DB_PASS=Gmais2023@@
+      - ELASTICSEARCH_URL=http://zammad-elasticsearch:9200
+      - RAILS_ENV=production
+      - SECRET_KEY_BASE=zammad_secret_key_base
+      - WEB_CONCURRENCY=2
+      - AUTO_INSTALL=1
+    ports:
+      - "2127:80"
+    depends_on:
+      - zammad-postgresql
+      - zammad-elasticsearch
+    volumes:
+      - zammad-data:/opt/zammad/data
+      - zammad-log:/var/log/zammad
+
+  zammad-elasticsearch:
+    image: bitnami/elasticsearch:8.5.1
+    restart: always
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - zammad-elasticsearch:/bitnami/elasticsearch/data
+
+  zammad-postgresql:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=zammad
+      - POSTGRES_PASSWORD=Gmais2023@@
+      - POSTGRES_DB=zammad_production
+    volumes:
+      - zammad-postgresql:/var/lib/postgresql/data
+
+  backup:
+    image: postgres:15.1-alpine
+    command: sh -c 'pg_dump -U zammad -h zammad-postgresql zammad_production -F c -b -f /backup/zammad_production.dump'
+    volumes:
+      - ./backup:/backup
+      - zammad-data:/opt/zammad/data
+      - zammad-log:/var/log/zammad
+    environment:
+      - PGPASSWORD=Gmais2023@@
+
+  restore:
+    image: postgres:15.1-alpine
+    command: sh -c 'pg_restore -U zammad -h zammad-postgresql -d zammad_production /backup/zammad_production.dump'
+    volumes:
+      - ./backup:/backup
+      - zammad-data:/opt/zammad/data
+      - zammad-log:/var/log/zammad
+    environment:
+      - PGPASSWORD=Gmais2023@@
+
+volumes:
+  zammad-postgresql:
+  zammad-elasticsearch:
+  zammad-data:
+  zammad-log:
