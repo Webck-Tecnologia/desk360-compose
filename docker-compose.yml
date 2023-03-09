@@ -2,7 +2,7 @@ version: '3'
 
 services:
   zammad:
-    image: desk360:1.0.0
+    image: ericocesar/desk360:1.0.0
     restart: always
     environment:
       - DB_ADAPTER=postgresql
@@ -22,8 +22,8 @@ services:
       - zammad-postgresql
       - zammad-elasticsearch
     volumes:
-      - zammad-data:/opt/zammad/data
-      - zammad-log:/var/log/zammad
+      - /home/ericocesar/appdata/desk360/zammad-data:/opt/zammad/data
+      - /home/ericocesar/appdata/desk360/zammad-log:/var/log/zammad
 
   zammad-elasticsearch:
     image: bitnami/elasticsearch:8.5.1
@@ -31,7 +31,7 @@ services:
     environment:
       - discovery.type=single-node
     volumes:
-      - zammad-elasticsearch:/bitnami/elasticsearch/data
+      - /home/ericocesar/appdata/desk360/zammad-elasticsearch:/bitnami/elasticsearch/data
 
   zammad-postgresql:
     image: postgres:15.1-alpine
@@ -41,15 +41,15 @@ services:
       - POSTGRES_PASSWORD=Gmais2023@@
       - POSTGRES_DB=zammad_production
     volumes:
-      - zammad-postgresql:/var/lib/postgresql/data
+      - /home/ericocesar/appdata/desk360/zammad-postgresql:/var/lib/postgresql/data
 
   backup:
     image: postgres:15.1-alpine
     command: sh -c 'pg_dump -U zammad -h zammad-postgresql zammad_production -F c -b -f /backup/zammad_production.dump'
     volumes:
       - ./backup:/backup
-      - zammad-data:/opt/zammad/data
-      - zammad-log:/var/log/zammad
+      - /home/ericocesar/appdata/desk360/zammad-data:/opt/zammad/data
+      - /home/ericocesar/appdata/desk360/zammad-log:/var/log/zammad
     environment:
       - PGPASSWORD=Gmais2023@@
 
@@ -58,13 +58,13 @@ services:
     command: sh -c 'pg_restore -U zammad -h zammad-postgresql -d zammad_production /backup/zammad_production.dump'
     volumes:
       - ./backup:/backup
-      - zammad-data:/opt/zammad/data
-      - zammad-log:/var/log/zammad
+      - /home/ericocesar/appdata/desk360/zammad-data:/opt/zammad/data
+      - /home/ericocesar/appdata/desk360/zammad-log:/var/log/zammad
     environment:
       - PGPASSWORD=Gmais2023@@
 
-volumes:
-  zammad-postgresql:
-  zammad-elasticsearch:
-  zammad-data:
-  zammad-log:
+# volumes:
+#  zammad-postgresql:
+#  zammad-elasticsearch:
+#  zammad-data:
+#  zammad-log:
